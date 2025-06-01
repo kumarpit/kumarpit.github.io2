@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/projects/khichdi/"><!-- Primary Meta Tags --><title>Khichdi | kumarpit.github.io</title><meta name="title" content="Khichdi | kumarpit.github.io"><meta name="description" content="Implementing a programming language in Racket"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/projects/khichdi/"><meta property="og:title" content="Khichdi | kumarpit.github.io"><meta property="og:description" content="Implementing a programming language in Racket"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/projects/khichdi/"><meta property="twitter:title" content="Khichdi | kumarpit.github.io"><meta property="twitter:description" content="Implementing a programming language in Racket"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"><link rel="stylesheet" href="/_astro/index.NNtT9YdB.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <div id="dappled-light"> <div id="glow"></div> <div id="glow-bounce"></div> <div class="perspective"> <div id="blinds"> <div class="shutters"> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> </div> <div class="vertical"> <div class="bar"></div> <div class="bar"></div> </div> </div> </div> <div id="progressive-blur"> <div></div> <div></div> <div></div> <div></div> </div> </div> <header class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap justify-between"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-bold"> kumarpit.github.io </div>  </a> <nav class="flex gap-4"> <a href="/about" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+about
+ </a> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+blog
+ </a> <a href="/projects" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+projects
+ </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/projects" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to projects
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2025-05-01T07:00:00.000Z"> May 1, 2025 </time> </div>
+&bull;
+<div class="font-base text-sm"> 4 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> Khichdi </div> <nav class="animate flex gap-1">   <a href="https://www.github.com/kumarpit/khichdi" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:github">   <symbol id="ai:mdi:github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></symbol><use href="#ai:mdi:github"></use>  </svg>  </a> </nav> </div> <article class="animate"> <p>This article is my attempt of putting together most of the ideas I learned in CPSC 311: Definition of Programming Languages - the most influential course of my undergraduate degree so far. I will attempt to take you through specifying a programming language from the ground up as well as building an interpreter for it in Racket.</p>
+<h2 id="my-experience-with-cpsc-311">My experience with CPSC 311</h2>
+<p>I thoroughly enjoyed taking CPSC 311 (with Prof. Ron Garcia). Working with Racket was amazing - throughout the course, we implemented interpreters for numerous languages, each building upon the other with more complex features. The template driven approach to development <a href="https://htdp.org">(HtDP)</a>, where the structure of our code followed directly from our data type definitions, made it a lot easier to reason about and debug programs. This coupled with the monadic design patterns we used to implement our interpreters lead to really delightful software that I thouroughly enjoyed working with. Ron emphasized how APIs and libraries are really just micro-DSLs in disguise, which allows us to use the learnings from this course in our development endevours.</p>
+<h2 id="cooking-khichdi---step-1">Cooking Khichdi - Step 1</h2>
+<p>Alright, let’s build a programming language. Meet “Khichdi”, a functional language which supports</p>
+<ul>
+<li>Mutable variables (by-reference and by-value)</li>
+<li>First-class (recursive) functions</li>
+<li>Arrays, dictionaries and pairs</li>
+<li>Backstops (simplified <a href="https://docs.scala-lang.org/tour/implicit-parameters.html">Scala Implicits</a>)</li>
+<li>Generalized search</li>
+<li>Exceptions</li>
+<li>First-class Continuations</li>
+</ul>
+<p>You can check out the full code at the repository <a href="https://github.com/kumarpit/khichdi">here</a></p>
+<p>Let’s start with the basics and define the surface-level syntax for conditionals, functions, identifiers and arithmetic.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>;; interp. expressions in a language that supports conditionals, functions and arithmetic</span></span>
+<span class="line"><span>;; Its syntax is defined by the following BNF:</span></span>
+<span class="line"><span>&#x3C;Khichdi> ::=</span></span>
+<span class="line"><span>(ARITHMETIC)</span></span>
+<span class="line"><span>          &#x3C;num></span></span>
+<span class="line"><span>        | {+ &#x3C;Khichdi> &#x3C;Khichdi>}</span></span>
+<span class="line"><span>        | {- &#x3C;Khichdi> &#x3C;Khichdi>}</span></span>
+<span class="line"><span>(IDENTIFIERS)</span></span>
+<span class="line"><span>        | {with {&#x3C;id> &#x3C;Khichdi>} &#x3C;Khichdi>}</span></span>
+<span class="line"><span>        | &#x3C;id></span></span>
+<span class="line"><span>(CONDITIONALS)</span></span>
+<span class="line"><span>        | {if0 &#x3C;Khichdi> &#x3C;Khichdi> &#x3C;Khichdi>}</span></span>
+<span class="line"><span>(FUNCTIONS)</span></span>
+<span class="line"><span>        | {&#x3C;Khichdi> &#x3C;Khichdi>}</span></span>
+<span class="line"><span>        | {fun {&#x3C;id>} &#x3C;Khichdi>}</span></span>
+<span class="line"><span> where</span></span>
+<span class="line"><span> {with {x named} body} ≡ { {fun {x} body} named}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>;; Examples:</span></span>
+<span class="line"><span>;; Basic arithmetic expression:</span></span>
+<span class="line"><span>;; {+ 1 2}   evaluates to 3</span></span>
+<span class="line"><span>;; {+ {1 2} {- 3 2}}  evaluates to 4</span></span>
+<span class="line"><span>;;</span></span>
+<span class="line"><span>;; Defining functions:</span></span>
+<span class="line"><span>;; {fun {x} {+ x 2}}  evalutes to a function that adds 2 to its input</span></span>
+<span class="line"><span>;;</span></span>
+<span class="line"><span>;; Using variables:</span></span>
+<span class="line"><span>;; {with {x {fun {y} {+ y 1}}</span></span>
+<span class="line"><span>;;       {x 3}}}  evaluates to 4</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>Writing a parser in Racket is straighforward, but before we get started with parsing we need to define a data type for Khichdi. Our parser will transform the input to a Racket expression of this type.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>(define-type Khichdi</span></span>
+<span class="line"><span>  [num (n number?)]</span></span>
+<span class="line"><span>  [add (lhs Khichdi?) (rhs Khichdi?)]</span></span>
+<span class="line"><span>  [sub (lhs Khichdi?) (rhs Khichdi?)]</span></span>
+<span class="line"><span>  [id (name rid?)]</span></span>
+<span class="line"><span>  [fun (param rid?) (body Khichdi?)]</span></span>
+<span class="line"><span>  [app (rator Khichdi?) (arg Khichdi?)]</span></span>
+<span class="line"><span>  [if0 (predicate Khichdi?) (consequent Khichdi?) (alternative Khichdi?)])</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>Using this definition, we can write the parser. This turns out to very easy due to Racket’s pattern matching capabilities. For instance, the following code sample shows you to parse an addition expression of Khichdi.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>;; the add case</span></span>
+<span class="line"><span>[`{+ ,sexp1 ,sexp2}</span></span>
+<span class="line"><span>       (add (parse/ralph sexp1)</span></span>
+<span class="line"><span>            (parse/ralph sexp2))]</span></span>
+<span class="line"><span>;; the fun case</span></span>
+<span class="line"><span>[`{fun {,x} ,sexp} #:when (rid? x)</span></span>
+<span class="line"><span>                         (fun x (parse/khichdi sexp))]</span></span>
+<span class="line"><span>;; and so on...</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>The interpreter looks like this.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>;; Khichdi Env -> Value</span></span>
+<span class="line"><span>;; environment passing interpreter</span></span>
+<span class="line"><span>;; EFFECT: signals an error in case of a runtime error</span></span>
+<span class="line"><span>(define (interp/ralph-env r env)</span></span>
+<span class="line"><span>  (type-case Khichdi r</span></span>
+<span class="line"><span>    [num (n) (numV n)]</span></span>
+<span class="line"><span>    [add (l r) (add-value (interp/khichdi-env l env)</span></span>
+<span class="line"><span>                          (interp/khichdi-env r env))]</span></span>
+<span class="line"><span>    [sub (l r) (sub-value (interp/khichdi-env l env)</span></span>
+<span class="line"><span>                          (interp/khichdi-env r env))]</span></span>
+<span class="line"><span>    [id (x) (lookup-env env x)]</span></span>
+<span class="line"><span>    [fun (x body) (funV x body env)]</span></span>
+<span class="line"><span>    [app (rator rand) (apply-value (interp/khichdi-env rator env)</span></span>
+<span class="line"><span>                                   (interp/khichdi-env rand env))]</span></span>
+<span class="line"><span>    [if0 (p c a)</span></span>
+<span class="line"><span>         (if  (zero-value? (interp/khichdi-env p env))</span></span>
+<span class="line"><span>              (interp/khichdi-env c env)</span></span>
+<span class="line"><span>              (interp/khichdi-env a env))]))</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="monadifying-the-interpreter">Monadifying the interpreter</h2>
+<p>Before moving on and adding new features, we should prepare our interpreter to handle effectful computations, such as handling exceptions and mutable variables, by “monadifying” its structure. I talk more about monads in this article.</p>
+<p>@todo</p>
+<h2 id="implementing-exceptions">Implementing Exceptions</h2>
+<h2 id="recursion">Recursion</h2>
+<h2 id="mutability">Mutability</h2>
+<h2 id="laziness">Laziness</h2> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+Back to top
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | kumarpit.github.io </div> <div> <ul class="flex flex-wrap gap-5 animate text-black/55"> <li class="flex text-nowrap"> <a href="https://twitter.com/kumaaarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on twitter">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:twitter">   <symbol id="ai:mdi:twitter" viewBox="0 0 24 24"><path fill="currentColor" d="M22.46 6c-.77.35-1.6.58-2.46.69c.88-.53 1.56-1.37 1.88-2.38c-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29c0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15c0 1.49.75 2.81 1.91 3.56c-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.2 4.2 0 0 1-1.93.07a4.28 4.28 0 0 0 4 2.98a8.52 8.52 0 0 1-5.33 1.84q-.51 0-1.02-.06C3.44 20.29 5.7 21 8.12 21C16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56c.84-.6 1.56-1.36 2.14-2.23"/></symbol><use href="#ai:mdi:twitter"></use>  </svg>  </a> </li><li class="flex text-nowrap"> <a href="https://github.com/kumarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on github">  <svg width="1em" height="1em" viewBox="0 0 24 24" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:github">   <use href="#ai:mdi:github"></use>  </svg>  </a> </li><li class="flex text-nowrap"> <a href="https://www.linkedin.com/in/krarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on linkedin">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:linkedin">   <symbol id="ai:mdi:linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37z"/></symbol><use href="#ai:mdi:linkedin"></use>  </svg>  </a> </li> <li class="line-clamp-1"> <a href="mailto:kumarpit@proton.me" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="Email kumarpit.github.io">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:email">   <symbol id="ai:mdi:email" viewBox="0 0 24 24"><path fill="currentColor" d="m20 8l-8 5l-8-5V6l8 5l8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></symbol><use href="#ai:mdi:email"></use>  </svg>  </a> </li> </ul> </div> </div>  </div> </footer> </body></html>

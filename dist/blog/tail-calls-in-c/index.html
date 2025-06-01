@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)"><link rel="icon" type="image/x-icon" href="/favicon-light.svg"><meta name="generator" content="Astro v4.16.18"><!-- Font preloads --><link rel="preload" href="/_astro/inter-latin-400-normal.BOOGhInR.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/inter-latin-600-normal.D273HNI0.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-400-normal.CvHVDnm4.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/_astro/lora-latin-600-normal.DUWh3m6k.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://astro-nano-demo.vercel.app/blog/tail-calls-in-c/"><!-- Primary Meta Tags --><title>Implementing Proper Tail Calls in C | kumarpit.github.io</title><meta name="title" content="Implementing Proper Tail Calls in C | kumarpit.github.io"><meta name="description" content="This article explains trampolining - a technique that is used to implement tail calls in languages that does not support them"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-nano-demo.vercel.app/blog/tail-calls-in-c/"><meta property="og:title" content="Implementing Proper Tail Calls in C | kumarpit.github.io"><meta property="og:description" content="This article explains trampolining - a technique that is used to implement tail calls in languages that does not support them"><meta property="og:image" content="https://astro-nano-demo.vercel.app/nano.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-nano-demo.vercel.app/blog/tail-calls-in-c/"><meta property="twitter:title" content="Implementing Proper Tail Calls in C | kumarpit.github.io"><meta property="twitter:description" content="This article explains trampolining - a technique that is used to implement tail calls in languages that does not support them"><meta property="twitter:image" content="https://astro-nano-demo.vercel.app/nano.png"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", event => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      }
+    );
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 150);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+  window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"><link rel="stylesheet" href="/_astro/index.NNtT9YdB.css"><script type="module" src="/_astro/hoisted.RlhmG3H2.js"></script></head> <body> <div id="dappled-light"> <div id="glow"></div> <div id="glow-bounce"></div> <div class="perspective"> <div id="blinds"> <div class="shutters"> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> <div class="shutter"></div> </div> <div class="vertical"> <div class="bar"></div> <div class="bar"></div> </div> </div> </div> <div id="progressive-blur"> <div></div> <div></div> <div></div> <div></div> </div> </div> <header class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="flex flex-wrap justify-between"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out">  <div class="font-bold"> kumarpit.github.io </div>  </a> <nav class="flex gap-4"> <a href="/about" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+about
+ </a> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+blog
+ </a> <a href="/projects" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2"> 
+projects
+ </a> </nav> </div>  </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-5">  <div class="animate"> <a href="/blog" class="relative group w-fit flex pl-7 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm"> 
+Back to blog
+ </div> </a> </div> <div class="space-y-1 my-10"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2024-11-08T08:00:00.000Z"> Nov 8, 2024 </time> </div>
+&bull;
+<div class="font-base text-sm"> 8 min read </div> </div> <div class="animate text-2xl font-semibold text-black dark:text-white"> Implementing Proper Tail Calls in C </div> </div> <article class="animate"> <blockquote>
+<p>In some circles, you will hear proper tail calls referred to as “tail call optimization”. I think this name is terrible: omitting unnecessary and stupid behaviour (like accumulating stack at every tail call) is hardly what I’d consider an “optimization”: it’s simply good principled design.
+— Ron Garcia</p>
+</blockquote>
+<h2 id="what-are-tail-calls">What are tail calls?</h2>
+<p>Tails calls are the recursive calls that are executed as the last statement of procedure. Consider the following Racket (PLAI) program to sum up the elements of a list of numbers.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; (listof Number) -> Number</span></span>
+<span class="line"><span style="color:#6A737D">;; produce the sum of all elements of lon</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sum</span><span style="color:#FFAB70"> lon</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">cond</span></span>
+<span class="line"><span style="color:#E1E4E8">    [(</span><span style="color:#79B8FF">empty?</span><span style="color:#E1E4E8"> lon) </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#79B8FF">else</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">+</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">first</span><span style="color:#E1E4E8"> lon)</span></span>
+<span class="line"><span style="color:#E1E4E8">             (sum (</span><span style="color:#79B8FF">rest</span><span style="color:#E1E4E8"> lon)))]))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#79B8FF"> 1</span><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>After the first call to <code>sum</code>, our computation can be expressed as <code>(+ 1 (sum (list 2 3)))</code>. After the second call, we get <code>(+ 1 (+ 2 (sum (list 3))))</code> and so on until the base case (i.e the empty list) is reached. Notice how on each call, the <code>+</code> operation needs to wait for the recursive call to return a value, resulting in this ever growing context of pending computations. This becomes clearer when we trace the execution of <code>sum</code>.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">>(sum </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">> (sum </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">> >(sum </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">> > (sum </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">())</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C; &#x3C; </span><span style="color:#79B8FF">0</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C; &#x3C;3</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C; </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;6</span></span>
+<span class="line"></span></code></pre>
+<p>This stack buildup is not ideal. This was just a small example, but imagine if our list was long enough to fill all available memory - we would run out of stack space well before we are able to evaluate our result. Understanding tail recursion can help us avoid this unneccesary build up on the stack. Consider the following modified <code>sum</code> procedure.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; (listof Number) -> Number</span></span>
+<span class="line"><span style="color:#6A737D">;; produce the sum of all elements of lon</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sum</span><span style="color:#FFAB70"> lon</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Accumulator: acc is Number</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Invariant: represents the sum of all elements before the current one</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">local</span><span style="color:#E1E4E8"> [(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sum-acc</span><span style="color:#FFAB70"> lon</span><span style="color:#FFAB70"> acc</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            (</span><span style="color:#79B8FF">cond</span></span>
+<span class="line"><span style="color:#E1E4E8">              [(</span><span style="color:#79B8FF">empty?</span><span style="color:#E1E4E8"> lon) acc]</span></span>
+<span class="line"><span style="color:#E1E4E8">              [</span><span style="color:#79B8FF">else</span><span style="color:#E1E4E8"> (sum-acc (</span><span style="color:#79B8FF">rest</span><span style="color:#E1E4E8"> lon)  </span><span style="color:#6A737D">;; &#x3C;-- this is a recursive call at a tail position</span></span>
+<span class="line"><span style="color:#E1E4E8">                             (</span><span style="color:#79B8FF">+</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">first</span><span style="color:#E1E4E8"> lon) acc))]))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    (sum-acc lon </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (sum (</span><span style="color:#79B8FF">list</span><span style="color:#79B8FF"> 1</span><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">)) </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>Here, we use an accumlator to store the sum so far. Instead of using the stack to store the context of pending computations, we use the accumlator variable. Thus at any given time we are occupying a only a single stack frame since our recursive calls don’t need to wait. The trace of <code>sum-acc</code> reflects this change.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">>(sum-acc </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#79B8FF"> 2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">>(sum-acc </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">2</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">>(sum-acc </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">>(sum-acc </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">() </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;6</span></span>
+<span class="line"></span></code></pre>
+<p>Racket has “proper” tail calls, i.e it does not accumulate any stack space when making a recursive call that appears at a tail position. This means that the following tail-recursive Racket program will simply run forever:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">tick</span><span style="color:#E1E4E8">) (</span><span style="color:#79B8FF">begin</span></span>
+<span class="line"><span style="color:#E1E4E8">                 (</span><span style="color:#79B8FF">displayln</span><span style="color:#9ECBFF"> 'tick</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                 (tock)))</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">tock</span><span style="color:#E1E4E8">) (</span><span style="color:#79B8FF">begin</span></span>
+<span class="line"><span style="color:#E1E4E8">                 (</span><span style="color:#79B8FF">displayln</span><span style="color:#9ECBFF"> 'tock</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                 (tick)))</span></span>
+<span class="line"><span style="color:#E1E4E8">(tick)</span></span>
+<span class="line"></span></code></pre>
+<p>C, on the other hand, accumulates stack space even with tail recursive procedures. This means that an equivalent <code>tick tock</code> program in C will terminate with a stack overflow error. This article discusses how we can implement “proper” tail calls in C so that procedures like <code>tick-tock</code> will run forever instead of blowing the stack. Our discussion will consider the <a href="https://en.wikipedia.org/wiki/Euclidean_algorithm">Euclidean algorithm</a>, a fundamental recursive algorithm to find the greatest common divisor of two integers. Following is an implementation of the Euclidean algorithm in Racket.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; Natural Natural -> Natural</span></span>
+<span class="line"><span style="color:#6A737D">;; runs the Euclidean algorithm on scalars a and b</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">euclid-alg</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">></span><span style="color:#E1E4E8"> b a)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (euclid-alg b a)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">=</span><span style="color:#E1E4E8"> b </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">          a</span></span>
+<span class="line"><span style="color:#E1E4E8">          (euclid-alg b (</span><span style="color:#79B8FF">modulo</span><span style="color:#E1E4E8"> a b)))))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">(test (euclid-alg </span><span style="color:#79B8FF">87</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (euclid-alg </span><span style="color:#79B8FF">10</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (euclid-alg </span><span style="color:#79B8FF">3</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">(test (euclid-alg </span><span style="color:#79B8FF">24</span><span style="color:#79B8FF"> 30</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<h2 id="trampolining">Trampolining</h2>
+<p>We will employ a technique called “trampolining” to implement “proper” tail calls in C. A trampoline is nothing but a wrapper around the recursive function. In regular recursion, we have a function calling itself from within. In trampolined recursion, the function doesn’t call itself, instead it returns another function (thus completing the current execution of our function) and this returned function again calls our recursive function. Then we develop a trampoline loop that keeps calling the function returned by our trampolined recursive function until computation is completed. In other words, control flow goes from our recursive function to the trampoline loop and back to the recursive function again and again (hence the name trampolining!). Here is a trampolined implementation of <code>euclid-alg</code> in Racket:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">(define-type trampoline</span></span>
+<span class="line"><span style="color:#E1E4E8">  [bounce [p </span><span style="color:#79B8FF">procedure?</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#E1E4E8">  [dismount [v (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">x</span><span style="color:#E1E4E8">) </span><span style="color:#79B8FF">#t</span><span style="color:#E1E4E8">)]]) </span><span style="color:#6A737D">;; v can be any type</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; (trampolineof X) is one of:</span></span>
+<span class="line"><span style="color:#6A737D">;; - (bounce ( -> (trampolineof X)))</span></span>
+<span class="line"><span style="color:#6A737D">;; - (dismount X)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; A simple while loop implementation (to get a more C-like structure)</span></span>
+<span class="line"><span style="color:#6A737D">;; ( -> Boolean) ( -> Void) -> Void</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">while-fn</span><span style="color:#FFAB70"> pred</span><span style="color:#FFAB70"> do</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">when</span><span style="color:#E1E4E8"> (pred)</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#79B8FF">begin</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">do</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">           (while-fn pred </span><span style="color:#79B8FF">do</span><span style="color:#E1E4E8">))))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define-syntax</span><span style="color:#79B8FF"> while</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">syntax-rules</span><span style="color:#E1E4E8"> ()</span></span>
+<span class="line"><span style="color:#E1E4E8">    [(while pred body)</span></span>
+<span class="line"><span style="color:#E1E4E8">     (while-fn (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () pred) (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () body))]))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; (trampolineof X) -> X</span></span>
+<span class="line"><span style="color:#6A737D">;; run the given trampoline to completion</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">loop-trampoline</span><span style="color:#FFAB70"> t0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Accumulator: t is (trampolineof X)</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Invariant: t represents pending computation (if any)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">local</span><span style="color:#E1E4E8"> [(</span><span style="color:#F97583">define</span><span style="color:#79B8FF"> t</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#79B8FF">begin</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#79B8FF">set!</span><span style="color:#E1E4E8"> t t0)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (while (bounce? t)</span></span>
+<span class="line"><span style="color:#E1E4E8">             (</span><span style="color:#79B8FF">let</span><span style="color:#E1E4E8"> ([c (bounce-p t)])</span></span>
+<span class="line"><span style="color:#E1E4E8">               (</span><span style="color:#79B8FF">set!</span><span style="color:#E1E4E8"> t (c))))</span></span>
+<span class="line"><span style="color:#6A737D">      ;; t is now a dismount</span></span>
+<span class="line"><span style="color:#E1E4E8">      (dismount-v t))))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; Natural Natural -> (trampolineof Natural)</span></span>
+<span class="line"><span style="color:#6A737D">;; runs the Euclidean algorithm on scalars a and b</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">euclid-alg</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">local</span><span style="color:#E1E4E8"> [(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">euclid-alg/tr</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">></span><span style="color:#E1E4E8"> b a)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (bounce (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () (euclid-alg/tr b a)))</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">=</span><span style="color:#E1E4E8"> b </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">          (dismount a)</span></span>
+<span class="line"><span style="color:#E1E4E8">          (bounce (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () (euclid-alg/tr b (</span><span style="color:#79B8FF">modulo</span><span style="color:#E1E4E8"> a b)))))))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    (loop-trampoline (euclid-alg/tr a b))))</span></span>
+<span class="line"></span></code></pre>
+<p>Notice how all recursive calls are represented by the <code>bounce</code> data type and the base case is represented by <code>dismount</code>. Using the information encapsulated by these data representations, the <code>loop-trampoline</code> procedure is able to determine whether or not the computation is complete.</p>
+<h2 id="defunctionalization">Defunctionalization</h2>
+<p>Notice that we use lambda functions in the <code>bounce</code> constructor. C does not have lambdas, and so we aren’t quite ready to translate this Racket code to C. We need to remove any usage of first-class of functions, a process refered to as “defunctionalization”. Defunctionalization entails two key steps:</p>
+<ul>
+<li>Create abstractions for all places a lambda is being applied or constructed</li>
+<li>Then replace the lambda with a data representation</li>
+</ul>
+<p>The only place were we apply the <code>bounce</code> lambdas is in the <code>loop-trampoline</code> procedure. So, we create a new <code>apply/th</code> (read: apply thunk) procedure to abstract away lambda application.</p>
+<blockquote>
+<p>A thunk refers to an argument-less function that mimics lazy evaluations. For example, the procedure <code>(define (lazy-sum) (+ 1 2))</code> is a thunk. By capturing the state of our recursive function at each step, we are creating thunks that get evaluated by the <code>loop-trampoline</code> procedure.</p>
+</blockquote>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">apply/th</span><span style="color:#FFAB70"> th</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">match</span><span style="color:#E1E4E8"> th</span></span>
+<span class="line"><span style="color:#E1E4E8">    [p </span><span style="color:#F97583">#:when</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">procedure?</span><span style="color:#E1E4E8"> p) (p)]))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; (trampolineof X) -> X</span></span>
+<span class="line"><span style="color:#6A737D">;; run the given trampoline to completion</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">loop-trampoline</span><span style="color:#FFAB70"> t0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Accumulator: t is (trampolineof X)</span></span>
+<span class="line"><span style="color:#6A737D">  ;; Invariant: t represents pending computation (if any)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">local</span><span style="color:#E1E4E8"> [(</span><span style="color:#F97583">define</span><span style="color:#79B8FF"> t</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#79B8FF">begin</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#79B8FF">set!</span><span style="color:#E1E4E8"> t t0)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (while (bounce? t)</span></span>
+<span class="line"><span style="color:#E1E4E8">             (</span><span style="color:#79B8FF">let</span><span style="color:#E1E4E8"> ([c (bounce-p t)])</span></span>
+<span class="line"><span style="color:#E1E4E8">               (</span><span style="color:#79B8FF">set!</span><span style="color:#E1E4E8"> t (apply/th c))))</span></span>
+<span class="line"><span style="color:#6A737D">      ;; t is now a dismount</span></span>
+<span class="line"><span style="color:#E1E4E8">      (dismount-v t))))</span></span>
+<span class="line"></span></code></pre>
+<p>The <code>bounce</code> lambdas are created in the <code>euclid-alg/tr</code> procedure. We introduce new procedures to abstract away these constructions.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; Natural Natural -> ( -> (trampolineof Natural))</span></span>
+<span class="line"><span style="color:#6A737D">;; returns the thunk encapsulating the work to be done for the b>a case</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">b>a/th</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () (euclid-alg/tr b a)))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; Natural Natural -> ( -> (trampolineof Natural))</span></span>
+<span class="line"><span style="color:#6A737D">;; returns the thunk encapsulating the work to be done for the case when b&#x3C;=a (b != 0)</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">b&#x3C;=a/th</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> () (euclid-alg/tr b (</span><span style="color:#79B8FF">modulo</span><span style="color:#E1E4E8"> a b))))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">;; Natural Natural -> ( -> (trampolineof Natural))</span></span>
+<span class="line"><span style="color:#6A737D">;; trampolined euclid-alg</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">euclid-alg/tr</span><span style="color:#FFAB70"> a</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">></span><span style="color:#E1E4E8"> b a)</span></span>
+<span class="line"><span style="color:#E1E4E8">      (bounce (b>a/th a b))</span></span>
+<span class="line"><span style="color:#E1E4E8">      (</span><span style="color:#79B8FF">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">=</span><span style="color:#E1E4E8"> b </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">          (dismount a)</span></span>
+<span class="line"><span style="color:#E1E4E8">          (bounce (b&#x3C;=a/th a b)))))</span></span>
+<span class="line"></span></code></pre>
+<p>Now we are setup to get rid of these first-class functions altogether. To do so, we introduce a new data type — <code>thunk</code>. This will encapsulate the same information that the lambdas did.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#E1E4E8">(define-type </span><span style="color:#79B8FF">thunk</span></span>
+<span class="line"><span style="color:#E1E4E8">  [b>a  (a </span><span style="color:#79B8FF">number?</span><span style="color:#E1E4E8">) (b </span><span style="color:#79B8FF">number?</span><span style="color:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#E1E4E8">  [b&#x3C;=a (a </span><span style="color:#79B8FF">number?</span><span style="color:#E1E4E8">) (b </span><span style="color:#79B8FF">number?</span><span style="color:#E1E4E8">)])</span></span>
+<span class="line"></span></code></pre>
+<p>Now we update our <code>apply/th</code> procedure to handle these two thunk variants.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; Thunk -> (trampolineof Natural)</span></span>
+<span class="line"><span style="color:#6A737D">;; dispatches the appropriate thunk for euclid-alg</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">apply/th</span><span style="color:#FFAB70"> th</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (type-case </span><span style="color:#79B8FF">thunk</span><span style="color:#E1E4E8"> th</span></span>
+<span class="line"><span style="color:#E1E4E8">    [b>a  (a b) (euclid-alg/tr b a)]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [b&#x3C;=a (a b) (euclid-alg/tr b (</span><span style="color:#79B8FF">modulo</span><span style="color:#E1E4E8"> a b))]))</span></span>
+<span class="line"></span></code></pre>
+<p>Now we have a trampolined, defunctionalized version of the Euclidean algorithm. This can easily be translated to C.</p>
+<h2 id="euclidean-algorithm-in-c-with-proper-tail-calls">Euclidean algorithm in C with proper tail calls</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> _thunk {</span></span>
+<span class="line"><span style="color:#F97583">  enum</span><span style="color:#E1E4E8"> { b_gt_a, b_lte_a } tag;</span></span>
+<span class="line"><span style="color:#F97583">  struct</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    int</span><span style="color:#E1E4E8"> a;</span></span>
+<span class="line"><span style="color:#F97583">    int</span><span style="color:#E1E4E8"> b;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } values;</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">typedef</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> _thunk thunk;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">struct</span><span style="color:#E1E4E8"> _trampoline {</span></span>
+<span class="line"><span style="color:#F97583">  enum</span><span style="color:#E1E4E8"> { bounce, dismount } tag;</span></span>
+<span class="line"><span style="color:#F97583">  union</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    int</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">    thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">next;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } value;</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"><span style="color:#F97583">typedef</span><span style="color:#F97583"> struct</span><span style="color:#E1E4E8"> _trampoline trampoline;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">thunk </span><span style="color:#F97583">*</span><span style="color:#B392F0">th_b_gt_a</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">thunk </span><span style="color:#F97583">*</span><span style="color:#B392F0">th_b_lte_a</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">trampoline </span><span style="color:#F97583">*</span><span style="color:#B392F0">apply_th</span><span style="color:#E1E4E8">(thunk </span><span style="color:#F97583">*</span><span style="color:#FFAB70">th</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">trampoline </span><span style="color:#F97583">*</span><span style="color:#B392F0">tr_euclid_alg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">int</span><span style="color:#B392F0"> loop_trampoline</span><span style="color:#E1E4E8">(trampoline </span><span style="color:#F97583">*</span><span style="color:#FFAB70">tr</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">int</span><span style="color:#B392F0"> euclid_alg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span></code></pre>
+<br>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#F97583">#include</span><span style="color:#9ECBFF"> "euclidean.h"</span></span>
+<span class="line"><span style="color:#F97583">#include</span><span style="color:#9ECBFF"> &#x3C;assert.h></span></span>
+<span class="line"><span style="color:#F97583">#include</span><span style="color:#9ECBFF"> &#x3C;stdlib.h></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">thunk </span><span style="color:#F97583">*</span><span style="color:#B392F0">th_b_gt_a</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)</span><span style="color:#B392F0">malloc</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">sizeof</span><span style="color:#E1E4E8">(thunk));</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->tag </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> b_gt_a;</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->values.a </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> a;</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->values.b </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> b;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">thunk </span><span style="color:#F97583">*</span><span style="color:#B392F0">th_b_lte_a</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)</span><span style="color:#B392F0">malloc</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">sizeof</span><span style="color:#E1E4E8">(thunk));</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->tag </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> b_lte_a;</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->values.a </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> a;</span></span>
+<span class="line"><span style="color:#E1E4E8">  data->values.b </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> b;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">trampoline </span><span style="color:#F97583">*</span><span style="color:#B392F0">tr_euclid_alg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  trampoline </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (trampoline </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">)</span><span style="color:#B392F0">malloc</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">sizeof</span><span style="color:#E1E4E8">(trampoline));</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (b </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> a) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">th </span><span style="color:#F97583">=</span><span style="color:#B392F0"> th_b_gt_a</span><span style="color:#E1E4E8">(a, b);</span></span>
+<span class="line"><span style="color:#E1E4E8">    data->tag </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bounce;</span></span>
+<span class="line"><span style="color:#E1E4E8">    data->value.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> th;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (b </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      data->tag </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> dismount;</span></span>
+<span class="line"><span style="color:#E1E4E8">      data->value.result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> a;</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      thunk </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">th </span><span style="color:#F97583">=</span><span style="color:#B392F0"> th_b_lte_a</span><span style="color:#E1E4E8">(a, b);</span></span>
+<span class="line"><span style="color:#E1E4E8">      data->tag </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bounce;</span></span>
+<span class="line"><span style="color:#E1E4E8">      data->value.next </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> th;</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> data;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">trampoline </span><span style="color:#F97583">*</span><span style="color:#B392F0">apply_th</span><span style="color:#E1E4E8">(thunk </span><span style="color:#F97583">*</span><span style="color:#FFAB70">th</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  int</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> th->values.a;</span></span>
+<span class="line"><span style="color:#F97583">  int</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> th->values.b;</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (th->tag </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> b_gt_a) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> tr_euclid_alg</span><span style="color:#E1E4E8">(b, a);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> tr_euclid_alg</span><span style="color:#E1E4E8">(b, a </span><span style="color:#F97583">%</span><span style="color:#E1E4E8"> b);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">int</span><span style="color:#B392F0"> loop_trampoline</span><span style="color:#E1E4E8">(trampoline </span><span style="color:#F97583">*</span><span style="color:#FFAB70">tr</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  trampoline </span><span style="color:#F97583">*</span><span style="color:#E1E4E8">current </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tr;</span></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (current->tag </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> bounce) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    current </span><span style="color:#F97583">=</span><span style="color:#B392F0"> apply_th</span><span style="color:#E1E4E8">(current->value.next);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> current->value.result;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">int</span><span style="color:#B392F0"> euclid_alg</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#FFAB70"> a</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">int</span><span style="color:#FFAB70"> b</span><span style="color:#E1E4E8">) { </span><span style="color:#F97583">return</span><span style="color:#B392F0"> loop_trampoline</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">tr_euclid_alg</span><span style="color:#E1E4E8">(a, b)); }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">int</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() { </span><span style="color:#B392F0">assert</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">euclid_alg</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">54</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">21</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 3</span><span style="color:#E1E4E8">); }</span></span>
+<span class="line"></span></code></pre>
+<h2 id="continuation-passing-style">Continuation Passing Style</h2>
+<p>This is great, we can now run any tail recursive function in C without blowing the stack. But what if our function cannot easily be expressed as tail recursive? A common exmaple of such functions are those which aren’t singly recursive (i.e make two or more recursive invocations at a time). One such case occurs in the optimal solution to the famous towers of Hanoi problem. Here is a solution to the towers of Hanoi problem in Racket:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; Natural Natural Natural Natural -> (listof S-Exp)</span></span>
+<span class="line"><span style="color:#6A737D">;; returns the list of steps to solve the tower of Hanoi problem with n disks</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">hanoi</span><span style="color:#FFAB70"> n</span><span style="color:#FFAB70"> from</span><span style="color:#FFAB70"> to</span><span style="color:#FFAB70"> other</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">match</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    [n </span><span style="color:#F97583">#:when</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">&#x3C;</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">) (</span><span style="color:#79B8FF">error</span><span style="color:#79B8FF"> `</span><span style="color:#E1E4E8">(number of disks </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">n cannot be less than </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#79B8FF">0</span><span style="color:#79B8FF"> '</span><span style="color:#E1E4E8">()]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#79B8FF">else</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">append</span><span style="color:#E1E4E8"> (hanoi (</span><span style="color:#79B8FF">-</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                         from</span></span>
+<span class="line"><span style="color:#E1E4E8">                         other</span></span>
+<span class="line"><span style="color:#E1E4E8">                         to)</span></span>
+<span class="line"><span style="color:#79B8FF">                  `</span><span style="color:#E1E4E8">((move disk </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">n from </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">from to </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">to))</span></span>
+<span class="line"><span style="color:#E1E4E8">                  (hanoi (</span><span style="color:#79B8FF">-</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                         other</span></span>
+<span class="line"><span style="color:#E1E4E8">                         to</span></span>
+<span class="line"><span style="color:#E1E4E8">                         from))]))</span></span>
+<span class="line"></span></code></pre>
+<p>Notice how we need to make two recursive calls in order to solve this problem. Since we have two recursive calls, it is clearly not possible to have both of them be in a tail position. However, we can achieve tail recursion by converting this procedure to use continuation passing style. There are numerous resources online that will be able to explain CPSing much better than I can (for instance, see <a href="https://matt.might.net/articles/by-example-continuation-passing-style/">this article</a>). Here is what a CPSed solution to the towers of Hanoi look like:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="racket"><code><span class="line"><span style="color:#6A737D">;; Natural Natural Natural Natural Continuation -> (listof S-Exp)</span></span>
+<span class="line"><span style="color:#6A737D">;; returns the list of steps to solve the towers of Hanoi problem with n disks -- using CPS!</span></span>
+<span class="line"><span style="color:#E1E4E8">(</span><span style="color:#F97583">define</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">hanoi/cps</span><span style="color:#FFAB70"> n</span><span style="color:#FFAB70"> from</span><span style="color:#FFAB70"> to</span><span style="color:#FFAB70"> other</span><span style="color:#FFAB70"> k</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  (</span><span style="color:#79B8FF">match</span><span style="color:#E1E4E8"> n</span></span>
+<span class="line"><span style="color:#E1E4E8">    [n </span><span style="color:#F97583">#:when</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">&#x3C;</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">) (</span><span style="color:#79B8FF">error</span><span style="color:#79B8FF"> `</span><span style="color:#E1E4E8">(number of disks </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">n cannot be less than 0!))]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8"> (k </span><span style="color:#79B8FF">'</span><span style="color:#E1E4E8">())]</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#79B8FF">else</span></span>
+<span class="line"><span style="color:#E1E4E8">     (hanoi/cps (</span><span style="color:#79B8FF">-</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                from</span></span>
+<span class="line"><span style="color:#E1E4E8">                other</span></span>
+<span class="line"><span style="color:#E1E4E8">                to</span></span>
+<span class="line"><span style="color:#E1E4E8">                (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">v0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                  (hanoi/cps (</span><span style="color:#79B8FF">-</span><span style="color:#E1E4E8"> n </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                             other</span></span>
+<span class="line"><span style="color:#E1E4E8">                             to</span></span>
+<span class="line"><span style="color:#E1E4E8">                             from</span></span>
+<span class="line"><span style="color:#E1E4E8">                             (</span><span style="color:#F97583">λ</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">v1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                               (k (</span><span style="color:#79B8FF">append</span><span style="color:#E1E4E8"> v0</span></span>
+<span class="line"><span style="color:#79B8FF">                                          `</span><span style="color:#E1E4E8">((move disk </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">n from </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">from to </span><span style="color:#79B8FF">,</span><span style="color:#E1E4E8">to))</span></span>
+<span class="line"><span style="color:#E1E4E8">                                          v1))))))]))</span></span>
+<span class="line"></span></code></pre>
+<p>Now we can use trampolining and defunctionalization to be able to implement a “proper” tail recursive solution to the towers of Hanoi in C (or really any other language that doesn’t have proper tail calls).</p> </article>  </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-5">  <div class="relative"> <div class="absolute right-0 -top-20"> <button id="back-to-top" class="relative group w-fit flex pl-8 pr-3 py-1.5 flex-nowrap rounded border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute top-1/2 left-2 -translate-y-1/2 size-4 stroke-2 fill-none stroke-current rotate-90"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></polyline> </svg> <div class="text-sm">
+Back to top
+</div> </button> </div> </div> <div class="flex justify-between items-center"> <div>
+&copy; 2025 | kumarpit.github.io </div> <div> <ul class="flex flex-wrap gap-5 animate text-black/55"> <li class="flex text-nowrap"> <a href="https://twitter.com/kumaaarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on twitter">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:twitter">   <symbol id="ai:mdi:twitter" viewBox="0 0 24 24"><path fill="currentColor" d="M22.46 6c-.77.35-1.6.58-2.46.69c.88-.53 1.56-1.37 1.88-2.38c-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29c0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15c0 1.49.75 2.81 1.91 3.56c-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.2 4.2 0 0 1-1.93.07a4.28 4.28 0 0 0 4 2.98a8.52 8.52 0 0 1-5.33 1.84q-.51 0-1.02-.06C3.44 20.29 5.7 21 8.12 21C16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56c.84-.6 1.56-1.36 2.14-2.23"/></symbol><use href="#ai:mdi:twitter"></use>  </svg>  </a> </li><li class="flex text-nowrap"> <a href="https://github.com/kumarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on github">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:github">   <symbol id="ai:mdi:github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></symbol><use href="#ai:mdi:github"></use>  </svg>  </a> </li><li class="flex text-nowrap"> <a href="https://www.linkedin.com/in/krarpit" target="_blank" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="kumarpit.github.io on linkedin">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:linkedin">   <symbol id="ai:mdi:linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37z"/></symbol><use href="#ai:mdi:linkedin"></use>  </svg>  </a> </li> <li class="line-clamp-1"> <a href="mailto:kumarpit@proton.me" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/95 decoration-1 hover:dark:decoration-white/50 text-current hover:text-black hover:dark:text-white transition-colors duration-300 ease-in-out underline underline-offset-2" aria-label="Email kumarpit.github.io">  <svg width="1em" height="1em" class="h-6 w-6" aria-hidden="true" focusable="false" data-icon="mdi:email">   <symbol id="ai:mdi:email" viewBox="0 0 24 24"><path fill="currentColor" d="m20 8l-8 5l-8-5V6l8 5l8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></symbol><use href="#ai:mdi:email"></use>  </svg>  </a> </li> </ul> </div> </div>  </div> </footer> </body></html>
