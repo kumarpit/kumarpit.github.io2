@@ -1,0 +1,6 @@
+---
+title: "GRASP"
+description: "Led the development of embedded software for a robotic prosthetic arm featured at the 2024 Cybathlon"
+date: "Oct 25 2025"
+repoURL: "https://github.com/BEARUBC"
+---
