@@ -166,13 +166,14 @@ function toggleTheme(dark) {
   }
 
   function preloadTheme() {
-    const userTheme = localStorage.theme;
-
-    if (userTheme === "light" || userTheme === "dark") {
-      toggleTheme(userTheme === "dark");
-    } else {
-      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    }
+    toggleTheme(false);
+    // const userTheme = localStorage.theme;
+    //
+    // if (userTheme === "light" || userTheme === "dark") {
+    //   toggleTheme(userTheme === "dark");
+    // } else {
+    //   toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    // }
   }
 
   document.addEventListener("DOMContentLoaded", () => init());
