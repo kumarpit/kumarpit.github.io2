@@ -2,6 +2,7 @@
 import Head from "@components/Head.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
+import Sunlit from "@components/Sunlit.astro";
 import { SITE } from "@consts";
 
 type Props = {
@@ -16,8 +17,13 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <Head title={`${title} | ${SITE.NAME}`} description={description} />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+    />
   </head>
   <body>
+    <Sunlit />
     <Header />
     <main>
       <slot />

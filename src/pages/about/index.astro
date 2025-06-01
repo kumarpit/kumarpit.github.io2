@@ -2,6 +2,8 @@
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import { ABOUT } from "@consts";
+import { Image } from "astro:assets";
+import cover from "./assets/arpit_headshot.jpg";
 ---
 
 <PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
@@ -11,6 +13,7 @@ import { ABOUT } from "@consts";
         About me 
       </div>
         <div class="animate space-y-4">
+            <Image src={cover} alt="cover image" class="max-w-[300px] mb-10" />
             <p>
                 Hi, I'm Arpit. I am in my fourth year at UBC, majoring in Mathematics and Computer Science. I find these disciplines fascinating and greatly rewarding - there are only a few things in life that feel as good as flowing through a proof or coming up with neat abstractions. I enjoy building software and am always learning about new technologies and design principles. Outside of school, I am interested in art and weightlifting. Recently, I have gotten into running and am learning to play the Ukulele.
             </p>

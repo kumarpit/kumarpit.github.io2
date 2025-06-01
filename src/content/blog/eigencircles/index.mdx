@@ -1,0 +1,268 @@
+---
+title: "Eigencircles"
+description: "Eigencircles are visualization of 2x2 matrices that provide a fascinating geometric understanding of matrix properties"
+date: "6 Aug 2024"
+---
+import { Image } from "astro:assets";
+import eigencircle from "./assets/eigencircle.png";
+import eigencircle1 from "./assets/eigencircle1.png"
+import eigencircle2 from "./assets/eigencircle2.png";
+import eigencircle3 from "./assets/eigencircle3.png";
+import eigencircle5 from "./assets/eigencircle5.png";
+import eigencircle6 from "./assets/eigencircle6.png";
+
+## Introduction
+
+Eigencircles are a concept I came across on [this](https://math.stackexchange.com/questions/1749645/can-two-different-matrices-have-same-eigenvalues-and-eigenvectors) math stackexchange forum. They are a visualization of 2x2 matrices that provide a fascinating geometric understanding of matrix properties and their connection to eigenvectors and eigenvalues. I aim to summarize my understanding of eigencircles in this article.
+
+## What are Eigencircles?
+
+An eigenvalue of a square matrix $$A$$ is a number $$\lambda$$ such that $$Ax = \lambda x$$ for any non-zero vector $$x$$. Let $$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$$ and $$x = \begin{pmatrix} x \\ y \end{pmatrix}$$. Then we can write this as
+
+$$
+\begin{equation} \begin{bmatrix} a & b \\ c & d \end{bmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{bmatrix} \lambda & 0 \\ 0 & \lambda \end{bmatrix} \begin{pmatrix} x \\ y \end{pmatrix}
+\end{equation}
+$$
+
+Now in the original article, Englefield and Farr state that matrices of the form $$\begin{bmatrix} \lambda & 0 \\ 0 & \lambda \end{bmatrix}$$ are isomorphic to the reals under matrix addition and multiplication. They then utilize the field isomorphism
+
+$$
+\begin{bmatrix} \lambda & \mu \\ -\mu & \lambda \end{bmatrix} \rightarrow \lambda + i\mu
+$$
+
+to rewrite $$(1)$$ as
+
+$$
+\begin{equation} \begin{bmatrix} a & b \\ c & d \end{bmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{bmatrix} \lambda & \mu \\ -\mu & \lambda \end{bmatrix} \begin{pmatrix} x \\ y \end{pmatrix} \end{equation}
+$$
+
+After skimming through a few articles on abstract algebra, this made sense. But I came across another approach to arrive at $$(2)$$ that felt more intuitive. I describe this next.
+
+From the SVD decomposition of a matrix, we know that every linear transformation represented by the matrix $$A$$ can be written as $$A = P\Sigma Q^{T}$$ where $$P, Q$$ are othgonal matrices and $$\Sigma$$ is a diagonal matrix. For the 2x2 case, the only orthogonal matrices are rotation and refelction matrices while the diagonal matrix is just a scaling matrix. Therefore, the 2x2 matrix $$A$$ simply rotates and scales every vector it is applied to. Notice that reflecting a vector along some axis of rotation can be expressed as a rotation.
+
+In other words, for any vector $$x$$, $$Ax$$ results in a rotation by angle $$\theta = \angle (x, Ax)$$ and a scaling by factor $$s$$. More formally, we can write this as
+
+$$
+\forall x = \begin{bmatrix} x \\ y \end{bmatrix}, \exists (s, \theta) : Ax = s \cdot \begin{bmatrix} \cos\theta & -\sin\theta \\ +\sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}
+$$
+
+We can rewrite the matrix on the right hand side of the equality to be more succint
+
+$$
+s \cdot \begin{bmatrix} \cos\theta & -\sin\theta \\ +\sin\theta & \cos\theta \end{bmatrix} = \begin{bmatrix} \lambda & -\mu \\ \mu & \lambda \end{bmatrix}
+$$
+
+Now you may notice that this deviates from $$(2)$$ in that the minus signs on $$\mu$$ are reversed. This is the same as reversing the positive direction of the angles. Notice that
+
+$$
+s \cdot \begin{bmatrix} \cos(-\theta) & -\sin(-\theta) \\ +\sin(-\theta) & \cos(-\theta) \end{bmatrix} = s \cdot \begin{bmatrix} \cos\theta & +\sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix} = \begin{bmatrix} \lambda & \mu \\ -\mu & \lambda \end{bmatrix}
+$$
+
+<figure style="text-align: center">
+	<Image src={eigencircle} alt="eigencircle" />
+	<figcaption class="small-text" style="padding-top: 0.5em">
+		Figure 1: Taken from https://eigencircles.heavisidesdinner.com/eigenC/eigenC_book.html
+	</figcaption>
+</figure>
+
+In Figure 1, the left diagram corresponds to the case where we take $$\begin{bmatrix} \lambda & -\mu \\ \mu & \lambda \end{bmatrix}$$ and the right corresponds to the case where we consider $$\begin{bmatrix} \lambda & \mu \\ -\mu & \lambda \end{bmatrix}$$. Therefore, it is equivalant to continue using either of the derivations. I will continue using $$(2)$$.
+
+Following the general procedure to determine eigenvalues but using the matrix specified in the RHS of (2), we get
+
+$$
+\begin{vmatrix} a - \lambda & b-\mu \\ c + \mu & d - \lambda \end{vmatrix} = 0
+$$
+
+This results in the following equation:
+
+$$
+\begin{equation} (a-\lambda)(d-\lambda)-(b-\mu)(c+\mu) = 0 \end{equation}
+$$
+
+or, equivalently
+
+$$
+\begin{equation} \lambda^{2} + \mu^{2} - (a+d)\lambda - (b-c)\mu + ad - bc = 0 \end{equation}
+$$
+
+Notice that $$ad - bc$$ is just $$\det(A)$$. Now we define
+
+$$
+\begin{equation} f = \frac{a+d}{2} \end{equation}
+$$
+
+$$
+\begin{equation} g = \frac{b-c}{2} \end{equation}
+$$
+
+$$
+\begin{equation} r^{2} = f^{2} + g^{2} \end{equation}
+$$
+
+Using $$(5), (6), (7)$$ to simplify $$(4)$$ we get
+
+$$
+ \lambda^{2} - 2f\lambda + f^{2} + \mu^{2} - 2g\mu + g^{2} = r^{2} - \det(A)
+$$
+
+which is
+
+$$
+\begin{equation} (\lambda - f)^{2} + (\mu - g)^{2} = \rho^{2} \end{equation}
+$$
+
+where $$
+\rho^{2} = r^{2} - \det(A)
+$$. $$(8)$$ gives the equation for the eigencircle of $$A$$.
+
+## Deriving matrix properties from Eigencircles
+
+Okay, now consider $$(3)$$ again. We know that the determinant of any matrix with a zero row or a zero column is zero. Considering the values of $$\lambda, \mu$$ that would produce zero rows and columns, we get the following points: $$(a,b), (d,b), (a,-c), (d,-c)$$. These points must be on the eigencircle since they satisfy $$(3)$$. Moreover, since the center of our eigencircle is defined to be the midpoint of $$(a,d)$$ and $$(b,-c)$$
+
+$$ (f,g) = (\frac{a+d}{2}, \frac{b-c}{2}) $$
+
+these points define a rectangle.
+
+Defining the points $$F = (a,b), H = (a,-c), E = (d,-c), G = (d,b)$$, we get the following graph.
+
+<figure style="text-align: center">
+   <Image src={eigencircle1} alt="eigencircle" />
+   <figcaption class="small-text" style="padding-top: 0.5em">Figure 2: An eigencircle (assuming a < d and b < -c)</figcaption>
+</figure>
+
+> Before moving forward, you may notice the axes on Figure 2 corresponding to $$x, y$$ - these diagrams are from the original article and I was too lazy to refactor them. For the purposes of this article, $$x = \lambda$$ and $$y = \mu$$.
+
+This visualization has some very interesting properties. Firstly, notice that if $$(\lambda, 0)$$ lies on the circle, then $$\lambda$$ is an eigenvalue of $$A$$. Let $$L=(\lambda, 0)$$, then the vector $$\overrightarrow{LE}$$ is the corresponding eigenvector for $$\lambda$$.
+
+<figure style="text-align: center">
+	<Image src={eigencircle2} alt="eigencircle" />
+	<figcaption class="small-text" style="padding-top: 0.5em">
+		Figure 3: Determining eigenvectors from eigencircles
+	</figcaption>
+</figure>
+
+To see why, note that the vector $$\overrightarrow{LE} = \begin{pmatrix} d  \\ -c \end{pmatrix} - \begin{pmatrix} \lambda  \\ 0 \end{pmatrix} = \begin{pmatrix} d - \lambda  \\ -c \end{pmatrix}$$. If this is an eigenvector corresponding to eigenvalue $$\lambda$$, then it must be in the nullspace of the matrix $$\begin{bmatrix} a - \lambda & b \\ c & d - \lambda \end{bmatrix}$$.
+
+Let's see if this is the case:
+
+$$
+\begin{bmatrix} a - \lambda & b \\ c & d - \lambda \end{bmatrix} \begin{pmatrix} d - \lambda \\ -c \end{pmatrix} = \begin{pmatrix} (a-\lambda)(d-\lambda)-bc \\ 0 \end{pmatrix}
+$$
+
+But we know that $$(a-\lambda)(d-\lambda)-bc = 0$$ from $$(3)$$ (since $$(\lambda, 0)$$ lies on the eigencircle). Therefore, $$\overrightarrow{LE}$$ is indeed an eigenvector correspoinding to $$\lambda$$.
+
+We can also use the eigencircle to prove that the product of eigenvalues for a 2x2 matrix $$A$$ is equal to the value of its determinant. We use the "power of a point" theorem to show this. The power of any point $$P$$ given by $$\Pi(P)$$ with respect to some circle $$c$$ with center $$O$$ is defined as
+
+$$
+\begin{equation} \Pi(P) = |PO|^2 - r^2 \end{equation}
+$$
+
+Geometrically, the power of a point states that "[if some] line through any point $$P$$ meets a circle in points $$Q$$ and $$R$$, the product of the lengths, $$PQ$$ and $$PR$$, is the same for any direction of the line. The lengths are signed, so the product is positive (negative) when $$P$$ is outside (inside)
+the circle."
+
+<figure style="text-align: center">
+	<Image src={eigencircle3} alt="eigencircle" />
+	<figcaption class="small-text" style="padding-top: 0.5em">
+		Figure 4: Power of a point theorem
+	</figcaption>
+</figure>
+
+Consider Figure 4. What the power of a point theorem says is that the (signed) product of the lengths $$PX \cdot PX' = PY \cdot PY' = \Pi(P)$$. For more on the power of a point, refer to this [link](http://mathgardenblog.blogspot.com/2013/07/power-of-a-point.html#:~:text=Indeed%2C%20if%20we%20take%20U,%5E2%20%2D%20r%5E2.).
+
+Consider $$(9)$$. For the eigencircle, we can rewrite this as $$(P_x - f)^2 + (P_y - g)^2 - \rho^2$$. Notice that this expression can be expressed as the LHS of $$(3)$$ by construction. So we get that the power of a point with respect to a eigencircle is given by
+
+$$
+\begin{equation} \Pi(P) = (a-P_x)(d-P_x)-(b-P_y)(c+P_y) \end{equation}
+$$
+
+If we choose $$P = O = (0,0)$$, we get that $$\Pi(O) = \text{det}(A)$$! From Figure 3, we know that the (signed) lengths of the line segments $$OL_1$$ and $$OL_2$$ specify the eigenvalues. Well, from the power of a point theorem, we know that $$OL_1 \cdot OL_2 = \Pi(O) = \text{det}(A)$$. Personally, I found this fascinating.
+
+Finally, I am going to describe how the eigencircle relates to complex eigenvalues. Consider Figure 5a.
+
+<figure style="text-align: center">
+	<Image src={eigencircle5} alt="eigencircle" />
+	<figcaption class="small-text" style="padding-top: 0.5em">
+		Figure 5: Eigencircles and complex eigenvalues
+	</figcaption>
+</figure>
+
+From the power of a point theorem, we know that the power of $$Y$$ is given by
+
+$$\Pi(Y) = YL_1 \cdot YL_2 = YM \cdot YN$$
+
+As $$YL_1 = -YL_2$$, we have that $$YL_1^2 = YM \cdot YN > 0$$ (remember that we consider signed lengths). Knowing this, we can express the eigenvalues ($$L_1, L_2$$) in the following form
+
+$$
+\begin{equation} \lambda = OY \pm \sqrt{-YM \cdot YN} \end{equation}
+$$
+
+Now this is also valid for cases where the x-axis does not intersect the eigencircles (we will see why in a minute). Consider Figure 5b. We see that the quantity $$YM \cdot YN$$ is now positive, there the value inside the square in $$(11)$$ is negative, giving us a complex value. If $$YV$$ is a tangent to the circle at $$V$$, then, by the power of a point theorem, we have that $$YM \cdot YN = YV^2$$. Hence, we get the complex eigenvalues
+
+$$\lambda = OY \pm iYV$$
+
+Okay, so why is $$(11)$$ true when the x-axis does not intersect the eigencircle? Let's figure out the coordinates $$Y,M,N$$. Well, we can see that $$Y = (f, 0), M = (f, g-\rho), N = (f, g+\rho)$$ (recall definitions $$5, 6, 7$$). Plugging this into $$(11)$$ we get
+
+$$
+\lambda = f \pm \sqrt{-(g^2-\rho^2)}
+$$
+
+or equivalently,
+
+$$
+\begin{equation} \lambda = f \pm \sqrt{\rho^2 - g^2} \end{equation}
+$$
+
+Notice that if the x-axis does not intersect the eigencircle, then we have that $$\rho^2 < g^2$$ and therefore $$\rho^2 - g^2 < 0$$, just as we had derived earlier. For this case, we need to realize that $$\sqrt{\rho^2 - g^2}$$ is undefined and we need to factor out the $$\sqrt{-1}$$. More on this below.
+
+For $$\lambda$$ to be an eigenvalue, we know that equation $$(3)$$ must be satisfied for $$(\lambda, 0)$$. Notice that equation $$(3)$$ can be rewritten as
+
+$$
+\begin{equation} (\lambda - f)^2 + (\mu - g)^2 - \rho^2 = 0 \end{equation}
+$$
+
+This is just $$(8)$$ with the $$\rho^2$$ moved to the LHS. Plugging in $$(\lambda, 0)$$, we get
+
+$$
+\begin{align*}
+\biggr(f \pm i\sqrt{g^2 - \rho^2} - f\biggr)^2 + g^2 - \rho^2 &= 0 \\
+\biggr(\pm i\sqrt{g^2-\rho^2}\biggr)^2 + g^2 - \rho^2 &= 0 \\
+-(g^2 - \rho^2) + g^2 - \rho^2 &= 0 \\
+\rho^2 - g^2 + g^2 - \rho^2 &= 0 \\
+0 &= 0 \\
+\end{align*}
+$$
+
+as required. Therefore, you can determine all (both real and complex) eigenvalues using the eigencircle.
+
+Visualizing the eigenvectors corresponding to complex eigenvalues would require an additional axis to account for the imaginary value. Let $$\lambda = f \pm ih$$ where $$h = YV$$. Consider Figure 6.
+
+<figure style="text-align: center">
+	<Image src={eigencircle6} alt="eigencircle" />
+	<figcaption class="small-text" style="padding-top: 0.5em">
+		Figure 6: Geometric representation of complex eigenvectors
+	</figcaption>
+</figure>
+
+$$
+\overrightarrow{LE}
+$$
+
+and
+
+$$
+\overrightarrow{KE}
+$$
+
+represent the complex eigenvectors. Notice
+
+$$\overrightarrow{LE} = \overrightarrow{OE} - \overrightarrow{OL} = \begin{pmatrix} d \\ -c \\ 0 \end{pmatrix} - \begin{pmatrix} f \\ 0 \\ h \end{pmatrix}$$
+
+represents the complex eigenvector $$\begin{pmatrix} d - (f + ih)  \\ -c \end{pmatrix} = \begin{pmatrix} d - f - ih \\ -c \end{pmatrix}$$.
+
+I am going to stop there. It was fun reading about eigencircles. I believe the way in which the properties of eigenvectors and eigenvalues expressed themselves through geometry was beautiful. Refer to [^1] and [^2] for the original articles on eigencircles.
+
+<br />
+<br />
+
+[^1]: Englefield, M. J., & Farr, G. E. (2006). Eigencircles of 2 x 2 Matrices. Mathematics Magazine Vol. 79 Oct.,2006, 281-289.
+[^2]: Englefield, M. J., & Farr, G. E. (2010). Eigencircles and associated surfaces. The Mathematical Gazette Vol.94 No. 531 (November 2010), 438-449.

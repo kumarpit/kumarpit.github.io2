@@ -1,0 +1,38 @@
+---
+import Link from "@components/Link.astro";
+import { SITE, SOCIALS } from "@consts";
+import { Icon } from "astro-icon/components";
+---
+
+<div>
+  <ul class="flex flex-wrap gap-5 animate text-black/55">
+    {
+      SOCIALS.map((SOCIAL) => (
+        <li class="flex text-nowrap">
+          <Link
+            href={SOCIAL.HREF}
+            external
+            aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}
+          >
+            <Icon
+              class="h-6 w-6"
+              name={SOCIAL.ICON}
+              aria-hidden="true"
+              focusable="false"
+            />
+          </Link>
+        </li>
+      ))
+    }
+    <li class="line-clamp-1">
+      <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
+        <Icon
+          class="h-6 w-6"
+          name="mdi:email"
+          aria-hidden="true"
+          focusable="false"
+        />
+      </Link>
+    </li>
+  </ul>
+</div>

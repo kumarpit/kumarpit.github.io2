@@ -1,3 +1,5 @@
+@import url("./sunlit.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,7 +21,6 @@ body {
 body {
   @apply font-serif antialiased;
   @apply flex flex-col;
-  @apply bg-stone-100 dark:bg-stone-900;
 }
 
 header {
