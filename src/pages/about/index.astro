@@ -3,29 +3,48 @@ import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import { ABOUT } from "@consts";
 import { Image } from "astro:assets";
-import cover from "./assets/arpit_headshot.jpg";
+import cover from "../../assets/images/arpit_headshot.jpg";
 ---
 
 <PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
-    <Container>
-    <div class="space-y-10">
-      <div class="animate font-semibold text-black dark:text-white">
-        About me 
-      </div>
-        <div class="animate space-y-4">
-            <Image src={cover} alt="cover image" class="max-w-[300px] mb-10" />
-            <p>
-                Hi, I'm Arpit. I am in my fourth year at UBC, majoring in Mathematics and Computer Science. I find these disciplines fascinating and greatly rewarding - there are only a few things in life that feel as good as flowing through a proof or coming up with neat abstractions. I enjoy building software and am always learning about new technologies and design principles. Outside of school, I am interested in art and weightlifting. Recently, I have gotten into running and am learning to play the Ukulele.
-            </p>
-            <p>
-I have interned at Visier as a Site Reliability Engineer - the most influential experience in my career so far. I participated in infrastructure design discussions, optimized build pipelines, worked on several security improvements, wrote lambdas and ton of IaC modules, witnessed production fires and postmortems and spent hours on end reading about AWS and Azure services. The world of SRE was very new to me but it has fundamentally changed how I think about building software and is definitely a role I see myself in down the line.
-</p>
-
-<p>
-I have also interned at Vidyard as a Software Engineering Intern on the Upgrade (Billing) team. There, I worked with Ruby on Rails and contributed to the migration to Stripe in order to enable self-serve purchases. This was my first professional experience and my first time using Ruby. One of my highlights of this internship was discovering Ruby's metaprogramming capabilities.
-My goals in life are rather simple. I just want to continuously push the limits of my capabilities and learn as much as I can from the extremely talented people I have the fortune of conversing with. I hope to be a productive and impactful software engineer capable of leading large-scale projects - but more importantly, I hope I can bring some positivity and smiles in the lives of those around me.
-            </p>
-            </div>
-    </Container>
+  <Container>
+    <article class="animate space-y-4 text-align-left">
+          <Image src={cover} alt="cover image" class="max-w-[300px] mb-10" />
+          <p>
+            Hi, I'm Arpit. I am in my fourth year at UBC, majoring in
+            Mathematics and Computer Science. I find these disciplines
+            fascinating and greatly rewarding - there are only a few things in
+            life that feel as good as flowing through a proof or coming up with
+            neat abstractions. I enjoy building software and am always learning
+            about new technologies and design principles. Outside of school, I
+            am interested in art and weightlifting. Recently, I have gotten into
+            running and am learning to play the Ukulele.
+          </p>
+          <p>
+            I have interned at Visier as a Site Reliability Engineer - the most
+            influential experience in my career so far. I participated in
+            infrastructure design discussions, optimized build pipelines, worked
+            on several security improvements, wrote lambdas and ton of IaC
+            modules, witnessed production fires and postmortems and spent hours
+            on end reading about AWS and Azure services. The world of SRE was
+            very new to me but it has fundamentally changed how I think about
+            building software and is definitely a role I see myself in down the
+            line.
+          </p>
+          <p>
+            I have also interned at Vidyard as a Software Engineering Intern on
+            the Upgrade (Billing) team. There, I worked with Ruby on Rails and
+            contributed to the migration to Stripe in order to enable self-serve
+            purchases. This was my first professional experience and my first
+            time using Ruby. One of my highlights of this internship was
+            discovering Ruby's metaprogramming capabilities. My goals in life
+            are rather simple. I just want to continuously push the limits of my
+            capabilities and learn as much as I can from the extremely talented
+            people I have the fortune of conversing with. I hope to be a
+            productive and impactful software engineer capable of leading
+            large-scale projects - but more importantly, I hope I can bring some
+            positivity and smiles in the lives of those around me.
+          </p>
+    </article>
+  </Container>
 </PageLayout>
-

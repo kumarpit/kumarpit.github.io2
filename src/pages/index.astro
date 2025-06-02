@@ -5,7 +5,7 @@ import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import Link from "@components/Link.astro";
 import { dateRange } from "@lib/utils";
-import { SITE, HOME} from "@consts";
+import { SITE, HOME } from "@consts";
 
 const blog = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -35,17 +35,26 @@ const work = await Promise.all(
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
   <Container>
-    <h4 class="animate font-semibold text-black dark:text-white text-xl">
-      Hi, my name is Arpit.
+    <h4 class="animate font-semibold text-black dark:text-white text-2xl">
+      नमस्ते
     </h4>
     <div class="space-y-16">
       <section>
         <article class="space-y-4">
           <p class="animate">
-            I am a computer science and mathematics student at the University of
-            British Columbia. Here I write about my explorations in topics that
-            interest me - mainly system design principles, language-oriented
-            programming and art. A lot on this site is still under construction.
+            My name is Arpit, and I am a computer science and
+            mathematics student at the University of British Columbia. Here I
+            write about my explorations in topics that interest me - mainly
+            relating to system design, language-oriented programming, and math.
+            A lot on this site is still under construction.
+          </p>
+          <p class="animate">
+            I am currently interning at SAP Concur, where I am working on the
+            Entity Lifecycle Management team--we work on orchestrating tenant
+            onboarding/deletion workflows across 100+ global subsystems within
+            the Concur Spend organization. In my time outside of work, I'm
+            usually at the gym getting stronger, or trying to fill up my
+            sketchbook. I'm always open for a chat!
           </p>
           <p class="animate">
             You can find me on
@@ -54,7 +63,7 @@ const work = await Promise.all(
               aria-label="Astro Sphere on Github"
               external
             >
-              twitter 
+              twitter
             </Link>,
             <Link
               href="https://github.com/markhorn-dev/astro-sphere"
@@ -69,17 +78,19 @@ const work = await Promise.all(
               external
             >
               github
-            </Link>, or send me an 
+            </Link>, or send me an
             <Link
               href="https://github.com/markhorn-dev/astro-sphere"
               aria-label="Astro Sphere on Github"
               external
             >
-            email
+              email
             </Link>.
           </p>
         </article>
       </section>
+
+      <div class="flex gap-x-6">
 
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
@@ -97,6 +108,26 @@ const work = await Promise.all(
         </ul>
       </section>
 
+      <section class="animate space-y-6">
+        <div class="flex flex-wrap gap-y-2 items-center justify-between">
+          <h5 class="font-semibold text-black dark:text-white">
+            Recent projects
+          </h5>
+          <Link href="/projects"> See all projects </Link>
+        </div>
+        <ul class="flex flex-col gap-4">
+          {
+            projects.map((project) => (
+              <li>
+                <ArrowCard entry={project} />
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      </div>
+      
       <section class="animate space-y-6 mb-20">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
           <h5 class="font-semibold text-black dark:text-white">
@@ -124,23 +155,6 @@ const work = await Promise.all(
         </ul>
       </section>
 
-      <section class="animate space-y-6">
-        <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h5 class="font-semibold text-black dark:text-white">
-            Recent projects
-          </h5>
-          <Link href="/projects"> See all projects </Link>
-        </div>
-        <ul class="flex flex-col gap-4">
-          {
-            projects.map((project) => (
-              <li>
-                <ArrowCard entry={project} />
-              </li>
-            ))
-          }
-        </ul>
-      </section>
     </div>
   </Container>
 </PageLayout>

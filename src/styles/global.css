@@ -15,7 +15,7 @@ html.dark {
 
 html,
 body {
-  @apply size-full;
+  @apply size-full text-sm;
 }
 
 body {
@@ -38,7 +38,11 @@ footer {
 article {
   @apply max-w-full prose dark:prose-invert prose-img:mx-auto prose-img:my-auto;
   @apply text-black dark:text-white prose-headings:font-semibold; 
-  @apply prose-headings:text-black prose-headings:dark:text-white;
+  @apply prose-headings:text-black prose-headings:dark:text-white text-sm;
+}
+
+blockquote {
+    @apply border-black/15;
 }
 
 @layer utilities {
@@ -47,6 +51,7 @@ article {
     @apply decoration-black/15 dark:decoration-white/30;
     @apply transition-colors duration-300 ease-in-out;
   }
+
   article a:hover {
     @apply text-black dark:text-white;
     @apply decoration-black/25 dark:decoration-white/50;
